@@ -1,0 +1,996 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" >
+<link rel="stylesheet" type ="text/css" href="style.css" id="cssLink">
+<script language="javascript" type="text/javascript" src="comm.js"></script>
+<script language="javascript" type="text/javascript" src="cookieUtil.js"></script>
+<script language="javascript" type="text/javascript" src="xmlUtil.js"></script>
+<script language="javascript" type="text/javascript" src="dialog.js"></script>
+<style type='text/css' >
+a:link{
+	color:#464646;
+	text-decoration:none;
+}
+a:visited{
+	color:#464646;
+	text-decoration:none;
+}
+a:hover{
+	color:#ed145b;
+	text-decoration:underline;
+}
+a:active{
+	color:#ed145b;
+	text-decoration:underline;
+}
+.default, .default a:link, .default a:visited {
+	color: #000000;
+}
+.today, .today a:link, .today a:visited {
+	color: #00BB00;
+}
+#calendar_year {
+	display: none;
+	line-height: 130%;
+	background: #FFFFFF;
+	position: absolute;
+	z-index: 10;
+}
+#calendar_year .col {
+	float: left;
+	background: #FFFFFF;
+	margin-left: 1px;
+	border: 1px solid #86B9D6;
+	padding: 4px;
+}
+#calendar_month {
+	display: none;
+	background: #FFFFFF;
+	line-height: 130%;
+	border: 1px solid #86B9D6;
+	padding: 4px;
+	position: absolute;
+	z-index: 11;
+}
+#year,#month{
+	padding-right:10px;
+}
+</style>
+</head>
+<script language="javascript" type="text/javascript">
+function getId(idStr) { return document.getElementById(idStr);}
+function setBgc(id, bgc) {id.style.backgroundColor = bgc;}
+
+function dstLayoutUpdate()
+{
+	var mode = getId("TIM_DaylightSetEnable_RW");
+	var fixedType = getId("TIM_DstFixedType_RW");
+	
+	var fixedNone = getId("XSTR_DST_FIXED_NONE");
+	var offset = getId("dstOffset");
+	
+	var setting = getId("DST_Settings");
+	
+	var weekDiv = getId("DST_WEEK");
+	var byWeekDiv = getId("DTS_BY_WEEK");
+	var sWDayDiv = getId("DST_SWDay");
+	var eWDayDiv = getId("DST_EWDay");
+	
+	var byDateDiv = getId("DTS_BY_DATE");
+	var sMDayDiv = getId("DST_SMDay");
+	var eMDayDiv = getId("DST_EMDay");
+	
+	var sMonth = getId("dstSMonth");
+	var eMonth = getId("dstEMonth");
+	var sWeek = getId("dstSWeek");
+	var eWeek = getId("dstEWeek");
+	var sWDay = getId("dstSWDay");
+	var eWDay = getId("dstEWDay");
+	var sMDay = getId("dstSMDay");
+	var eMDay = getId("dstEMDay");
+	var sHour = getId("dstSHour");
+	var eHour = getId("dstEHour");
+	
+	setting.style.display = "none";
+	
+	weekDiv.style.display = "";
+	byWeekDiv.style.display = "";
+	sWDayDiv.style.display = "";
+	eWDayDiv.style.display = "";
+
+	byDateDiv.style.display = "none";
+	sMDayDiv.style.display = "none";
+	eMDayDiv.style.display = "none";
+	
+	sMonth.disabled = "disabled";
+	eMonth.disabled = "disabled";
+	sWeek.disabled = "disabled";
+	eWeek.disabled = "disabled";
+	sWDay.disabled = "disabled";
+	eWDay.disabled = "disabled";
+	sMDay.disabled = "disabled";
+	eMDay.disabled = "disabled";
+	sHour.disabled = "disabled";
+	eHour.disabled = "disabled";
+	
+	fixedNone.disabled = "disabled";
+	fixedType.disabled = "disabled";
+	offset.disabled = "disabled";
+
+	if (mode.value == 1)	 /*Auto*/
+	{
+		setting.style.display = "";
+		fixedNone.disabled = "";
+		
+		setBgc(sMonth, "#F5F4EA");
+		setBgc(eMonth, "#F5F4EA");
+		setBgc(sWeek, "#F5F4EA");
+		setBgc(eWeek, "#F5F4EA");
+		setBgc(sWDay, "#F5F4EA");
+		setBgc(eWDay, "#F5F4EA");
+		setBgc(sMDay, "#F5F4EA");
+		setBgc(eMDay, "#F5F4EA");
+		setBgc(sHour, "#F5F4EA");
+		setBgc(eHour, "#F5F4EA");
+		
+		fixedNone.style.backgroundColor	= "#F5F4EA";
+		fixedType.style.backgroundColor	= "#F5F4EA";
+		offset.style.backgroundColor	= "#F5F4EA";
+
+		if (fixedType.value == 1)	/*By Date*/
+		{
+			weekDiv.style.display = "none";
+			byWeekDiv.style.display = "none";
+			sWDayDiv.style.display = "none";
+			eWDayDiv.style.display = "none";
+
+			byDateDiv.style.display = "";
+			sMDayDiv.style.display = "";
+			eMDayDiv.style.display = "";
+		}
+		else{
+		}
+	}
+	else if (mode.value == 2)  /*Manual*/
+	{
+		setting.style.display = "";
+		
+		fixedType.disabled = "";
+		offset.disabled = "";
+		sMonth.disabled = "";
+		eMonth.disabled = "";
+		sHour.disabled = "";
+		eHour.disabled = "";
+		
+		setBgc(sMonth, "#FFFFFF");
+		setBgc(eMonth, "#FFFFFF");
+		setBgc(sHour, "#FFFFFF");
+		setBgc(eHour, "#FFFFFF");
+
+		setBgc(fixedNone, "#FFFFFF");
+		setBgc(fixedType, "#FFFFFF");
+		setBgc(offset, "#FFFFFF");
+		
+		if (fixedType.value == 1)	/*By Date*/
+		{
+			weekDiv.style.display = "none";
+			byWeekDiv.style.display = "none";
+			sWDayDiv.style.display = "none";
+			eWDayDiv.style.display = "none";
+
+			byDateDiv.style.display = "";
+			sMDayDiv.style.display = "";
+			eMDayDiv.style.display = "";
+			
+			sMDay.disabled = "";
+			eMDay.disabled = "";
+			setBgc(sMDay, "#FFFFFF");
+			setBgc(eMDay, "#FFFFFF");
+			changeDateDay();
+		}
+		else
+		{
+			sWeek.disabled = "";
+			eWeek.disabled = "";
+			sWDay.disabled = "";
+			eWDay.disabled = "";
+			setBgc(sWeek, "#FFFFFF");
+			setBgc(eWeek, "#FFFFFF");
+			setBgc(sWDay, "#FFFFFF");
+			setBgc(eWDay, "#FFFFFF");
+		}
+	}
+}
+var LOCATION_ATTR = {"ID": 0, "MODE": 1, "OFFSET": 2, "SMONTH": 3, "SWEEK": 4, "SWEEKDAY": 5,"SHOUR": 6, "EMONTH": 7, "EWEEK": 8, "EWEEKDAY": 9, "EHOUR": 10};
+var gLOCArray = null;
+var timeAJax = new xAjax("GET", "tzLocation.xml?now=" + new Date().getTime(), true, getTimeXML);
+timeAJax.send(null);
+var timeXMLHttp = timeAJax.xmlHttp;
+
+function getTimeXML() {
+
+	if (timeXMLHttp != null){
+		if (4 == timeXMLHttp.readyState){
+			if (200 == timeXMLHttp.status) {
+				gLOCArray = setXML2Array(loadXML(timeXMLHttp.responseText), "tzLocation", new Array("id", "mode", "offset", "sMonth", "sWeek", "sWeekDay","sHour", "eMonth", "eWeek", "eWeekDay","eHour"));
+			
+			} else if (0 != timeXMLHttp.status && timeXMLHttp != null){
+				confirm(timeXMLHttp.readyState + "/" + timeXMLHttp.status + ": Fail to get Location, please refresh this page to try again!");
+			}
+			}
+	}
+}
+function dataLocationChange() {
+	var dstType   = document.getElementById("TIM_DaylightSetEnable_RW").value;
+	if(dstType==1)
+	{
+		getLocationValue(gLOCArray,0,gLOCArray.length);
+	}
+	
+}
+function getLocationValue(locationVal, start, end)
+{
+	var index   = document.getElementById("TIM_ConturyLocation").value;
+	
+	for(var i=start; i<end; i++)
+	{
+		if(index==locationVal[i][LOCATION_ATTR.ID])
+		{
+			document.getElementById("TIM_DstFixedType_RW").value= locationVal[i][LOCATION_ATTR.MODE] ;
+			document.getElementById("dstOffset").value= locationVal[i][LOCATION_ATTR.OFFSET] ;
+			document.getElementById("dstSMonth").value= locationVal[i][LOCATION_ATTR.SMONTH] ;
+			document.getElementById("dstEMonth").value= locationVal[i][LOCATION_ATTR.EMONTH] ;
+			
+			
+			if(locationVal[i][LOCATION_ATTR.MODE]==1)
+			{
+				document.getElementById("dstSMDay").value= locationVal[i][LOCATION_ATTR.SWEEKDAY] ;
+				document.getElementById("dstEMDay").value= locationVal[i][LOCATION_ATTR.EWEEKDAY] ;
+			}
+			else
+			{
+				document.getElementById("dstSWeek").value= locationVal[i][LOCATION_ATTR.SWEEK] ;
+				document.getElementById("dstEWeek").value= locationVal[i][LOCATION_ATTR.EWEEK] ;
+				document.getElementById("dstSWDay").value= locationVal[i][LOCATION_ATTR.SWEEKDAY] ;
+				document.getElementById("dstEWDay").value= locationVal[i][LOCATION_ATTR.EWEEKDAY] ;
+			}
+			
+			document.getElementById("dstSHour").value= locationVal[i][LOCATION_ATTR.SHOUR] ;
+			document.getElementById("dstEHour").value= locationVal[i][LOCATION_ATTR.EHOUR] ;
+			
+		}
+	}
+	
+	dstLayoutUpdate();	
+	
+}
+</script>
+
+<body>
+<div class="content">
+	<div class="nav" id="nav">
+            <ul id="navUl">
+            </ul>
+    </div>
+	<div class="navbar">
+		<form method="post">
+		<div class="label_f"><span id="XSTR_LBL_NET_TIME_SVR">Network Time Server Settings</span></div>
+		<div class="OptDiv" align="center">
+			<table class="tb">
+				<tr>
+					<td width="30%"><span id="XSTR_LBL_TSYNC_BY_SNTP">Time Synchronized via SNTP</span></td>
+					<td width="70%"><input type="checkbox" name="TIM_EnableSntp_RW" value="ON" $%TIM_EnableSntp_RW#$></td>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_TSYNC_BY_DHCP">Time Synchronized via DHCP </span></td>
+					<td><input type="checkbox" name="TIM_UseDHCPTime_RW" value="ON" $%TIM_UseDHCPTime_RW#$></td>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_TIME_SVR_PRI">Primary Time Server</span></td>
+					<td><input type="text" name="TIM_SntpServer_RW" value="$%TIM_SntpServer_RW#$" class="text" maxLength="30"></td>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_TIME_SVR_SEC">Secondary Time Server</span></td>
+					<td><input type="text" name="TIM_SecSntpServer_RW" value="$%TIM_SecSntpServer_RW#$" class="text" maxLength="30"></td>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_TIME_ZONE">Time zone</span></td>
+					<td>
+						<select name="TIM_SntpZone" class="text">
+						<!$%TIM_SntpEntryInit#$> 
+						<!$%REPEAT(BEGIN, 0, TIM_SntpEntryLen_R)#$ >
+						<option value="$%TIM_SntpTab_R#$" $%TIM_Sntp_Select_R#$>$%TIM_SntpZone#$</option>
+						<!$%TIM_SntpIndexPlusPlus#$> 
+						<!$%REPEAT(END)#$>
+						</select>
+						<input type="hidden" name="TIM_Sntp_Index_R" value="$%TIM_Sntp_Index_R#$">
+						<input type="hidden" value="Load" name="DefaultLoad" class="btninput">
+						<input type="hidden" name="ReturnPage" value="/time.htm">
+					</td>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_RESYNC_INTERVAL">Resync Period</span></td>
+					<td><input type="text" name="TIM_SntpTimeOut_RW" value="$%TIM_SntpTimeOut_RW#$" class="text" maxLength="4"><span id="XSTR_LBL_GEN_TSECOND">second(s)</span></td>
+				</tr>
+			</table>
+		</div>
+		<div class="label_f"><span id="XSTR_LBL_DATE_FMT">Time/Date Format</span></div>
+		<div class="OptDiv" align="center">
+			<table class="tb">
+				<tr>
+					<td width="30%"><span id="XSTR_LBL_TIME_12H_FMT">12-Hour Clock</span></td>
+					<td width="70%"><input type="checkbox" name="TIM_Enable12Hour_RW" value="ON" $%TIM_Enable12Hour_RW#$ id="enable12Hour"></td>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_DATE_FMT">Date Format</span></td>
+					<td>
+						<select name="TIM_DateFormat_RW" id="TIM_DateFormat_RW" class="text" onchange="dateFormatChange()">
+							<option value="0"  $%TIM_DateFormat_RW(0)#$>1 JAN MON</option>
+							<option value="1"  $%TIM_DateFormat_RW(1)#$>1 January Monday</option>
+							<option value="2"  $%TIM_DateFormat_RW(2)#$>JAN 1 MON</option>
+							<option value="3"  $%TIM_DateFormat_RW(3)#$>January 1 Monday</option>
+							<option value="4"  $%TIM_DateFormat_RW(4)#$>MON 1 JAN</option>
+							<option value="5"  $%TIM_DateFormat_RW(5)#$>Monday 1 January</option>
+							<option value="6"  $%TIM_DateFormat_RW(6)#$>MON JAN 1</option>
+							<option value="7"  $%TIM_DateFormat_RW(7)#$>Monday January 1</option>
+							<option value="8"  $%TIM_DateFormat_RW(8)#$>DD MM YY</option>
+							<option value="9"  $%TIM_DateFormat_RW(9)#$>DD MM YYYY</option>
+							<option value="10" $%TIM_DateFormat_RW(10)#$>MM DD YY</option>
+							<option value="11" $%TIM_DateFormat_RW(11)#$>MM DD YYYY</option>
+							<option value="12" $%TIM_DateFormat_RW(12)#$>YY MM DD</option>
+							<option value="13" $%TIM_DateFormat_RW(13)#$>YYYY MM DD</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td id="dateSepTitle"><span id="XSTR_LBLPHONE_TD_DATE_SEP">Date Seperator</span></td>
+					<td id="dateSepContent">
+						<select name="TIM_DateSeperator_RW" class="text">
+							<option value="0" $%TIM_DateSeperator_RW(0)#$>/</option>
+							<option value="1" $%TIM_DateSeperator_RW(1)#$>-</option>
+							<option value="2" $%TIM_DateSeperator_RW(2)#$>.</option>
+							<option value="3" $%TIM_DateSeperator_RW(3)#$>space</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="hidden" name="ReturnPage" value="/time.htm">
+						<input type="hidden" name="CheckBoxManager" value="TIM_EnableSntp_RW,TIM_Enable12Hour_RW,TIM_UseDHCPTime_RW">
+					</td>
+					<!--td><input type="submit" name="DefaultSubmit" value="Apply" lang="XSTR_LBL_GEN_APPLY" class="btninput"></td-->
+				</tr>
+			</table>
+		</div>
+		<!--/form>
+	
+		<form method="post"-->
+		<div class="label"><span id="XSTR_LBL_DST_SETTINGS">Daylight Saving Time Settings</span></div>
+		<div class="OptDiv" align="center">
+			<table class="tb">
+			<tr>
+				<td width="30%"><span id="XSTR_LBL_LOCATION">Location</span></td>
+				<td width="70%">
+					<select name="TIM_ConturyLocation" id="TIM_ConturyLocation" class="text" onchange="dataLocationChange()">
+					<option id="TIM_ConturyLocation_None" value="0" >None</option>
+					<!$%TIM_CtryLocationInit#$> 
+					<!$%REPEAT(BEGIN, 1, TIM_CtryLocationLen_R)#$ >
+					<option value="$%TIM_CtryLocationTab_R#$" $%TIM_CtryLocation_Select_R#$>$%TIM_ConturyLocation#$</option>
+					<!$%TIM_CtryLocationPlusPlus#$> 
+					<!$%REPEAT(END)#$>
+					</select>
+					<input type="hidden" name="TIM_CtryLocation_Index_R" value="$%TIM_CtryLocation_Index_R#$">
+					<input type="hidden" value="Load" name="DefaultLoad" class="btninput">
+					<input type="hidden" name="ReturnPage" value="/time.htm">
+				</td>
+			</tr>
+			<tr>
+				<td width="30%"><span id="XSTR_LBL_DST_SET_TYPE">DST Set Type</span></td>
+				<td width="70%">
+					<select name="TIM_DaylightSetEnable_RW" id="TIM_DaylightSetEnable_RW" class="text" onchange="dstLayoutUpdate()">
+						<option id="XSTR_LBL_GEN_DISABLED" value="0"  $%TIM_DaylightSetEnable_RW(0)#$>Disabled</option>
+						<option id="XSTR_LBL_AUTOMATIC"   value="1"  $%TIM_DaylightSetEnable_RW(1)#$>Automatic</option>
+						<option id="XSTR_LBL_MANUAL"	   value="2"  $%TIM_DaylightSetEnable_RW(2)#$>Manual</option>
+					</select>
+				</td>
+			</tr>
+			</table>
+			<div id="DST_Settings" style="display:inherit">
+			<table class="tb">
+				<tr>
+					<td width="30%"><span id="XSTR_LBL_FIXED_TYPE">Fixed Type</span></td>
+					<td width="70%">
+						<select name="TIM_DstFixedType_RW" id="TIM_DstFixedType_RW" class="text" onchange="dstLayoutUpdate()">
+							<option value="0" id="XSTR_DST_FIXED_NONE" $%TIM_DstFixedType_RW(0)#$>Disabled</option>
+							<option value="1" id="XSTR_LBL_DST_DATA" $%TIM_DstFixedType_RW(1)#$>By Date</option>
+							<option value="2" id="XSTR_LBL_DST_WEEK"  $%TIM_DstFixedType_RW(2)#$>By Week</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td id="isOffset"><span id="XSTR_LBL_OFFSET">Offset</span></td>
+					<td><input id="dstOffset" type="text" name="TIM_DaylightIntervalTimer_RW" value="$%TIM_DaylightIntervalTimer_RW#$" maxlength="4" class="text"/><span id="XSTR_LBL_MINUTE">minutes</span></td>
+				</tr>
+			</table>
+			<table class="tb">
+				<tr>
+					<th width="30%" style="background-color:#EEF6F8;"></th>
+					<th width="30%" style="background-color:#EEF6F8;"><span id="XSTR_LBL_START">Start</span></th>
+					<th width="30%" style="background-color:#EEF6F8;"><span id="XSTR_LBL_END">End</span></th>
+					<th width="10%" style="background-color:#EEF6F8;"></th>
+				</tr>
+				<tr>
+					<td><span id="XSTR_LBL_MONTH">Month</span></td>
+					<td>
+						<select id="dstSMonth" name="TIM_DaylightStartMonth" class="text" onchange="createDay()">
+							<option id="XSTR_LBL_DT_M01" value="1"  $%TIM_DaylightStartMonth(1)#$>January</option>
+							<option id="XSTR_LBL_DT_M02" value="2"  $%TIM_DaylightStartMonth(2)#$>February</option>
+							<option id="XSTR_LBL_DT_M03" value="3"  $%TIM_DaylightStartMonth(3)#$>March</option>
+							<option id="XSTR_LBL_DT_M04" value="4"  $%TIM_DaylightStartMonth(4)#$>April</option>
+							<option id="XSTR_LBL_DT_M05" value="5"  $%TIM_DaylightStartMonth(5)#$>May</option>
+							<option id="XSTR_LBL_DT_M06" value="6"  $%TIM_DaylightStartMonth(6)#$>June</option>
+							<option id="XSTR_LBL_DT_M07" value="7"  $%TIM_DaylightStartMonth(7)#$>July</option>
+							<option id="XSTR_LBL_DT_M08" value="8"  $%TIM_DaylightStartMonth(8)#$>August</option>
+							<option id="XSTR_LBL_DT_M09" value="9"  $%TIM_DaylightStartMonth(9)#$>September</option>
+							<option id="XSTR_LBL_DT_M10" value="10" $%TIM_DaylightStartMonth(10)#$>October</option>
+							<option id="XSTR_LBL_DT_M11" value="11" $%TIM_DaylightStartMonth(11)#$>November</option>
+							<option id="XSTR_LBL_DT_M12" value="12" $%TIM_DaylightStartMonth(12)#$>December</option>
+						</select>
+					</td>
+					<td>
+						<select id="dstEMonth" name="TIM_DaylightEndMonth" class="text" onchange="createDay()">
+							<option id="XSTR_LBL_DT_M01" value="1"  $%TIM_DaylightEndMonth(1)#$>January</option>
+							<option id="XSTR_LBL_DT_M02" value="2"  $%TIM_DaylightEndMonth(2)#$>February</option>
+							<option id="XSTR_LBL_DT_M03" value="3"  $%TIM_DaylightEndMonth(3)#$>March</option>
+							<option id="XSTR_LBL_DT_M04" value="4"  $%TIM_DaylightEndMonth(4)#$>April</option>
+							<option id="XSTR_LBL_DT_M05" value="5"  $%TIM_DaylightEndMonth(5)#$>May</option>
+							<option id="XSTR_LBL_DT_M06" value="6"  $%TIM_DaylightEndMonth(6)#$>June</option>
+							<option id="XSTR_LBL_DT_M07" value="7"  $%TIM_DaylightEndMonth(7)#$>July</option>
+							<option id="XSTR_LBL_DT_M08" value="8"  $%TIM_DaylightEndMonth(8)#$>August</option>
+							<option id="XSTR_LBL_DT_M09" value="9"  $%TIM_DaylightEndMonth(9)#$>September</option>
+							<option id="XSTR_LBL_DT_M10" value="10" $%TIM_DaylightEndMonth(10)#$>October</option>
+							<option id="XSTR_LBL_DT_M11" value="11" $%TIM_DaylightEndMonth(11)#$>November</option>
+							<option id="XSTR_LBL_DT_M12" value="12" $%TIM_DaylightEndMonth(12)#$>December</option>
+						</select>
+					</td>
+					<td></td>
+				</tr>
+				<tr id="DST_WEEK">
+					<td><span id="XSTR_LBL_WEEK">Week</span></td>
+					<td>
+						<select id="dstSWeek" name="TIM_DaylightStartWeek" class="text">
+							<option value="1" $%TIM_DaylightStartWeek(1)#$>1</option>
+							<option value="2" $%TIM_DaylightStartWeek(2)#$>2</option>
+							<option value="3" $%TIM_DaylightStartWeek(3)#$>3</option>
+							<option value="4" $%TIM_DaylightStartWeek(4)#$>4</option>
+							<option value="5" $%TIM_DaylightStartWeek(5)#$>5</option>
+							<option value="6" $%TIM_DaylightStartWeek(6)#$>6</option>
+							<option id="XSTR_LBL_LASTWEEK" value="-1" $%TIM_DaylightStartWeek(-1)#$>Last Week</option>
+						</select>
+					</td>
+					<td>
+						<select id="dstEWeek" name="TIM_DaylightEndWeek" class="text">
+							<option value="1" $%TIM_DaylightEndWeek(1)#$>1</option>
+							<option value="2" $%TIM_DaylightEndWeek(2)#$>2</option>
+							<option value="3" $%TIM_DaylightEndWeek(3)#$>3</option>
+							<option value="4" $%TIM_DaylightEndWeek(4)#$>4</option>
+							<option value="5" $%TIM_DaylightEndWeek(5)#$>5</option>
+							<option value="6" $%TIM_DaylightEndWeek(6)#$>6</option>
+							<option id="XSTR_LBL_LASTWEEK" value="-1" $%TIM_DaylightEndWeek(-1)#$>The Last Week</option>
+						</select>
+					</td>
+					<td></td>
+				</tr>
+				</div>
+				<tr>
+					<td>
+					<div id="DTS_BY_WEEK" style="display:inherit"><span id="XSTR_LBL_WEEKDAY">Weekday</span></div>
+					<div id="DTS_BY_DATE" style="display:inherit"><span id="XSTR_LBL_DATEDAY">Month day</span></div>
+					</td>
+					<td>
+					<div id="DST_SWDay" style="display:inherit">
+						<select id="dstSWDay" name="TIM_DaylightStartDay" class="text">
+							<option id="XSTR_LBL_DT_W0" value="0" $%TIM_DaylightStartDay(0)#$>Sunday</option>
+							<option id="XSTR_LBL_DT_W1" value="1" $%TIM_DaylightStartDay(1)#$>Monday</option>
+							<option id="XSTR_LBL_DT_W2" value="2" $%TIM_DaylightStartDay(2)#$>Tuesday</option>
+							<option id="XSTR_LBL_DT_W3" value="3" $%TIM_DaylightStartDay(3)#$>Wednesday</option>
+							<option id="XSTR_LBL_DT_W4" value="4" $%TIM_DaylightStartDay(4)#$>Thursday</option>
+							<option id="XSTR_LBL_DT_W5" value="5" $%TIM_DaylightStartDay(5)#$>Friday</option>
+							<option id="XSTR_LBL_DT_W6" value="6" $%TIM_DaylightStartDay(6)#$>Saturday</option>
+						</select>
+					</div>
+					<div id="DST_SMDay" style="display:inherit">
+						<select id="dstSMDay" name="TIM_DaylightBeginDay_RW" class="text"></select>
+					</div>
+					</td>
+					<td>
+					<div id="DST_EWDay" style="display:inherit">
+						<select id="dstEWDay" name="TIM_DaylightEndDay" class="text">
+							<option id="XSTR_LBL_DT_W0" value="0" $%TIM_DaylightEndDay(0)#$>Sunday</option>
+							<option id="XSTR_LBL_DT_W1" value="1" $%TIM_DaylightEndDay(1)#$>Monday</option>
+							<option id="XSTR_LBL_DT_W2" value="2" $%TIM_DaylightEndDay(2)#$>Tuesday</option>
+							<option id="XSTR_LBL_DT_W3" value="3" $%TIM_DaylightEndDay(3)#$>Wednesday</option>
+							<option id="XSTR_LBL_DT_W4" value="4" $%TIM_DaylightEndDay(4)#$>Thursday</option>
+							<option id="XSTR_LBL_DT_W5" value="5" $%TIM_DaylightEndDay(5)#$>Friday</option>
+							<option id="XSTR_LBL_DT_W6" value="6" $%TIM_DaylightEndDay(6)#$>Saturday</option>
+						</select>
+					</div>
+					<div id="DST_EMDay" style="display:inherit">
+						<select id="dstEMDay" name="TIM_DaylightEndDay_RW" class="text"></select>
+					</div>
+					</td>
+
+					<td></td>
+				</tr>
+				<tr>
+					<td width="30%"><span id="XSTR_LBL_HOUR">Hour</span></td>
+					<td width="30%"><select id="dstSHour" name="TIM_DaylightBeginHour_RW"  class="text"></select></td>
+					<td width="30%"><select id="dstEHour" name="TIM_DaylightEndHour_RW" class="text"></select></td>
+					<td width="10%"></td>
+				</tr>
+			</table>
+			</div>
+			<script language="javascript" type="text/javascript">
+			dstLayoutUpdate();
+			</script>
+			<table class="tb" id="isApplay">
+				<tr>
+					<td width="30%"><input type="hidden" name="ReturnPage" value="/time.htm"></td>
+					<td width="70%"><input type="submit" name="DefaultSubmit" value="Apply" lang="XSTR_LBL_GEN_APPLY" class="btninput"></td>
+				</tr>
+			</table>
+		</div>
+		</form>
+	
+		<form method="post">
+		<div class="label"><span id="XSTR_LBL_TIME_SETTINGS">Manual Time Settings</span></div>
+		<div class="OptDiv">
+			<table class="tb">
+				<tr>
+					<td width="15%"><div id="calenderDiv" style="position:relative"><input type="text" id="calendarSet" onclick="showCalendar(event, this)" class="text" readonly></div></td>			
+					<td width="10%">
+                    	<select id="TIM_ManualHour" name="TIM_ManualHour" class="shortinput"></select>
+                        <input id="hour_24" name="hour_24" type="hidden" />
+                    </td>
+					<td width="13%"><select id="TIM_ManualMinute" name="TIM_ManualMinute" class="shortinput"></select></td>
+                    <td width="13%">
+                    	<select id="TIM_12Hour" name="TIM_12Hour" style="width:60px;" class="width10rem">
+                        	<option value="0">AM</option>
+                            <option value="1">PM</option>
+                   		</select></td>
+					<td width="37%"><input type="submit" name="DefaultSubmit" value="Apply" lang="XSTR_LBL_GEN_APPLY" class="btninput" onclick="saveTime()"></td>
+				</tr>	
+			</table>
+			<input type="hidden" name="TIM_ManualYear" id="TIM_ManualYear" />
+			<input type="hidden" name="TIM_ManualMonths" id="TIM_ManualMonths" />
+			<input type="hidden" name="TIM_ManualDay" id="TIM_ManualDay" />
+			<input type="hidden" name="ReturnPage" value="/time.htm" />
+		</div>
+		</form>
+	</div>
+</div>
+</body>
+
+<script language="javascript" type="text/javascript">
+if (userLv == 5) {
+	names[0] = getTranslateContent("XSTR_WEB_TITLE_AUDIO", "Media");
+	names[1] = getTranslateContent("XSTR_WEB_TITLE_MCAST", "MCAST");
+	names[2] = getTranslateContent("XSTR_WEB_TITLE_TIME", "Time/Date");
+	names[3] = getTranslateContent("XSTR_LBL_GEN_ADVANCED", "Advanced");
+	names[4] = getTranslateContent("XSTR_LBL_SETTINGS_SECURITY", "Security");
+	names_href = ["media.htm", "mcast.htm", "time.htm", "phoneAdv.htm","security.htm"];
+} else if (userLv == 10) {
+	names[0] = getTranslateContent("XSTR_WEB_TITLE_FEATURES", "Features");
+	names[1] = getTranslateContent("XSTR_WEB_TITLE_AUDIO", "Media");
+	names[2] = getTranslateContent("XSTR_WEB_TITLE_MCAST", "MCAST");
+	names[3] = getTranslateContent("XSTR_WEB_TITLE_ACTION", "Action");
+	names[4] = getTranslateContent("XSTR_WEB_TITLE_TIME", "Time/Date");
+	names[5] = getTranslateContent("XSTR_LBL_TONE", "Tone");
+	names[6] = getTranslateContent("XSTR_LBL_GEN_ADVANCED", "Advanced");
+	names[7] = getTranslateContent("XSTR_LBL_SETTINGS_SECURITY", "Security");
+	names_href = ["phone.htm", "media.htm", "mcast.htm", "action.htm","time.htm","tone.htm", "phoneAdv.htm","security.htm"];
+}
+
+createPhoneTitleCell(names, names_href);
+
+var serverTime =  "$%TIM_SeverTime_R#$";
+var timeArr = new Array;
+
+timeArr = serverTime.split(",");
+
+/*alert(timeArr);*/
+function dateFormatChange() {
+	var dateFormat        = document.getElementById("TIM_DateFormat_RW");
+	var dateFormatTitle   = document.getElementById('dateSepTitle');
+	var dateFormatContent = document.getElementById('dateSepContent');
+	
+	dateFormatTitle.style.display   = '';
+	dateFormatContent.style.display = '';
+	if(dateFormat.value < 8) {
+		dateFormatTitle.style.display   = 'none';
+		dateFormatContent.style.display = 'none';
+	}
+}
+
+function saveTime() {	
+	var cal    = document.getElementById("calendarSet").value;
+	var calArr = new Array();
+	var hour_24 = document.getElementById("hour_24");
+	var TIM_12Hour = document.getElementById("TIM_12Hour");
+	var TIM_ManualHour = document.getElementById("TIM_ManualHour");
+	var enable12Hour = document.getElementById("enable12Hour");
+	
+	calArr = cal.split("-");		
+	document.getElementById("TIM_ManualYear").value   = calArr[0];
+	document.getElementById("TIM_ManualMonths").value = calArr[1];
+	document.getElementById("TIM_ManualDay").value    = calArr[2];
+	if(enable12Hour.checked){
+		if(TIM_12Hour.value == 0){
+			hour_24.value = TIM_ManualHour.value;
+		}else{
+			var TIM_HourValue = TIM_ManualHour.value;
+			hour_24.value = parseInt(TIM_HourValue) + 12;	
+		}
+	}else{
+		hour_24.value = TIM_ManualHour.value;
+	}
+	//alert(hour_24.value);	
+}
+//---------------------------------------------------------
+var ie	   = (navigator.appName == "Microsoft Internet Explorer") ? true : false; 
+var parentId = null; 
+var gDay	 = null;
+var gMon	 = null; 
+var gYear	= null; 
+var today	= new Date(); 
+
+function $(objID) { 
+	return document.getElementById(objID); 
+}
+
+function finishBubble(event) { 
+	e = event ? event : window.event ; 
+	ie ? e.cancelBubble = true : e.stopPropagation(); 
+}
+
+function getPosition(obj) { 
+	var pos = new Array(); 
+	pos['x'] = obj.offsetLeft; 
+	pos['y'] = obj.offsetTop; 
+	while(obj = obj.offsetParent) { 
+		pos['x'] += obj.offsetLeft; 
+		pos['y'] += obj.offsetTop; 
+	} 
+	return pos; 
+} 
+
+function loadCalendar() { 
+	var dateDiv = '<div id="calendar" style="display:none; position:absolute;" onclick="finishBubble(event)">'
+				+ '	<div>'
+				+ '		<table cellspacing="0" cellpadding="0" style="text-align:center; width:212px; height:200px; border:1px solid #000; box-shadow:0 0 2px #f00; background:#dcdcdc;" class="sevenColTable width35rem">'
+				+ '			<tr align="center" style="width:210px; height:25px;">'
+				+ '				<td style="width:30px; text-align:right;">'
+				+ '					<a href="javascript:void(0)" onclick="setData(gYear, gMon-1, gDay)" title="previous month" style="color:#f00;"><<</a>'
+				+ '				</td>'
+				+ '				<td colspan="5" style="text-align:center; width:150px;">'
+				+ '					<a href="javascript:void(0)" onclick="showDiv(\'year\');finishBubble(event);" title="select years" id="year" style="color:#f00;"></a>'
+				+ '					<a href="javascript:void(0)" onclick="showDiv(\'month\');finishBubble(event);" title="select months" id="month" style="color:#f00;"></a>'
+				+ '					<a href="javascript:void(0)" id="day" style="color:#f00;"></a>'
+				+ '				</td>'
+				+ '				<td style="width:30px;">'
+				+ '					<a href="javascript:void(0)" onclick="setData(gYear, gMon+1, gDay)" title="next month" style="color:#f00;">>></a>'
+				+ '				</td>'
+				+ '			</tr>'
+				+ '			<tr style="width:210px; height:25px;">'
+				+ '				<td style="text-align:center; color:#00f;">Sun</td>'
+				+ '				<td style="text-align:center; color:#00f;">Mon</td>'
+				+ '				<td style="text-align:center; color:#00f;">Tue</td>'
+				+ '				<td style="text-align:center; color:#00f;">Wed</td>'
+				+ '				<td style="text-align:center; color:#00f;">Thu</td>'
+				+ '				<td style="text-align:center; color:#00f;">Fri</td>'
+				+ '				<td style="text-align:center; color:#00f;">Sat</td>'
+				+ '			</tr>'; 
+	for(var i = 0; i < 6; i++) { 
+		dateDiv += '<tr style="height:25px; background-color:#EEF6F8;">'; 
+		for(var j = 1; j <= 7; j++) 
+			dateDiv += "<td id=d" + (i*7+j) + " style='text-align:center;'></td>"; 
+		dateDiv += "</tr>"; 
+	}
+	dateDiv += '		</table>'
+			+  '	</div>'
+			+  '</div>';
+	
+	var yearDiv = '<div id="calendar_year" onclick="finishBubble(event)">'
+				+ '	<div class="col">'; 
+	for(var k = 2000; k <= 2089; k++) 
+	{ 
+		yearDiv += (k!=2000)&&(k%10==0) ? '</div><div class="col">' : ''; 
+		yearDiv += '		<a href="javascript:void(0)" onclick="setData(' + k + ', gMon, gDay);$(\'calendar_year\').style.display=\'none\';">'
+				+  '			<span' + (today.getFullYear()==k ? ' class="today"' : '') + '>' 
+				+ 					k 
+				+  '			</span>'
+				+  '		</a>'
+				+  '		<br />'; 
+	}	 
+	yearDiv += '	</div>'
+			+  '</div>'; 
+	
+	var monArr = new Array("January","February","March","April","May","June","July","August","September","October","November","December");
+	var monDiv = '<div id="calendar_month" onclick="finishBubble(event)">'; 
+	var monId = new Array("XSTR_LBL_DT_M01", "XSTR_LBL_DT_M02", "XSTR_LBL_DT_M03", "XSTR_LBL_DT_M04", "XSTR_LBL_DT_M05", "XSTR_LBL_DT_M06", "XSTR_LBL_DT_M07", "XSTR_LBL_DT_M08", "XSTR_LBL_DT_M09", "XSTR_LBL_DT_M10", "XSTR_LBL_DT_M11", "XSTR_LBL_DT_M12");
+	for(var k = 1; k <= 12; k++) 
+	{ 
+		monDiv += '<a href="javascript:void(0)" onclick="setData(gYear, ' + (k-1) + ', gDay);$(\'calendar_month\').style.display=\'none\';">'
+			   +  '	<span id="' + monId[k-1] + '"' + (today.getMonth()+1==k ? ' class="today"' : '') + '>' + monArr[k-1] + '</span>'
+			   +  '</a>'
+			   +  '<br />'; 
+	} 
+	monDiv += '</div>'; 
+	
+	var allBody = dateDiv + yearDiv + monDiv;
+	var nElement = document.createElement("div"); 
+	nElement.innerHTML = allBody; 
+	document.getElementById("calenderDiv").appendChild(nElement); 
+	
+	document.onclick = function(event) 
+	{ 
+		$('calendar').style.display = 'none'; 
+		$('calendar_year').style.display = 'none'; 
+		$('calendar_month').style.display = 'none'; 
+	}
+	$('calendar').onclick = function(event) 
+	{ 
+		finishBubble(event); 
+		$('calendar_year').style.display = 'none'; 
+		$('calendar_month').style.display = 'none'; 
+	} 
+} 
+
+function parseDate(s) { 
+	/(\d+)\-(\d+)\-(\d+)\s*(\d*):?(\d*)/.exec(s); 
+	var m1 = (RegExp.$1 && (RegExp.$1>1899 && RegExp.$1<2101)) ? parseFloat(RegExp.$1) : today.getFullYear(); 
+	var m2 = (RegExp.$2 && (RegExp.$2>0	&& RegExp.$2<13))   ? parseFloat(RegExp.$2) : today.getMonth()+1; 
+	var m3 = (RegExp.$3 && (RegExp.$3>0	&& RegExp.$3<32))   ? parseFloat(RegExp.$3) : today.getDate(); 
+	var m4 = (RegExp.$4 && (RegExp.$4>-1   && RegExp.$4<24))   ? parseFloat(RegExp.$4) : 0; 
+	var m5 = (RegExp.$5 && (RegExp.$5>-1   && RegExp.$5<60))   ? parseFloat(RegExp.$5) : 0; 
+	/(\d+)\-(\d+)\-(\d+)\s*(\d*):?(\d*)/.exec("0000-00-00 00\:00"); 
+	return new Date(m1, m2-1, m3, m4, m5); 
+}
+
+function setTime(day) { 
+	$('calendar').style.display = 'none'; 
+	parentId.value = gYear + "-" + zeroFill(gMon+1) + "-" + zeroFill(day); 
+}
+
+function showCalendar(event, pId) { 
+	parentId = pId; 
+	var parentDate = parentId.value ? parseDate(parentId.value) : today; 
+	
+	$('calendar').style.display = 'block'; 
+	$('calendar').style.left = '5px'; 
+	$('calendar').style.top = '25px'; 
+	finishBubble(event); 
+	setData(parentDate.getFullYear(), parentDate.getMonth(), parentDate.getDate()); 
+} 
+
+function setData(y, m, d) { 
+	var curDate = new Date(y, m, 1); 
+	var prevMon = curDate.getDay(); 
+	var tdView = null; 
+	var n = 1; 
+	
+	gDay = d;
+	gMon = curDate.getMonth();
+	gYear = curDate.getFullYear(); 
+	
+	$("day").innerHTML = d;
+	$("month").innerHTML = gMon+1>9 ? (gMon+1) : '0'+(gMon+1); 
+	$("year").innerHTML = gYear; 
+	
+	for(var i=1; i<=42; i++) { 
+		tdView = $("d" + i); 
+		tdView.innerHTML = " "; 
+		tdView.className = ""; 
+	} 
+	while(curDate.getMonth() == gMon) { 
+		tdView = $("d" + (n + prevMon)); 
+		tdView.innerHTML = '<a href="javascript:void(0)" onclick="setTime(' + n + ')">' + n + '</a>'; 
+		tdView.className = 'default'; 
+		if(	curDate.getFullYear() == today.getFullYear() && 
+			curDate.getMonth() == today.getMonth() 		 && 
+			curDate.getDate() == today.getDate()) 
+		{ 
+			tdView.className = 'today'; 
+			tdView.firstChild.title = 'today'; 
+		} 
+		curDate.setDate(++n); 
+	} 
+} 
+
+function showDiv(id) { 
+	$('calendar_' + id).style.display = 'block'; 
+	$('calendar_' + id).style.left	= '60px'; 
+	$('calendar_' + id).style.top	 = '45px'; 
+	if(id == "month") 	$("calendar_year").style.display  = "none";
+	else 				$("calendar_month").style.display = "none";
+}
+
+function zeroFill(str) { 
+	var str = parseFloat(str.toString().replace(/(^[\s0]+)|(\s+$)/g, '')); 
+	str = isNaN(str) ? 0 : str; 
+	return (str < 10 ? '0' : '') + str.toString(); 
+} 
+//---------------------------------------------------------
+var hSele = document.getElementById("TIM_ManualHour");
+var hOpts = document.getElementById("TIM_ManualHour").options;
+var mOpts = document.getElementById("TIM_ManualMinute").options;
+var tim12Hour = document.getElementById("TIM_12Hour");
+var dtsSMdayOpts = document.getElementById("dstSMDay").options;
+var dtsEMdayOpts = document.getElementById("dstEMDay").options;
+var dlHourStartOpts = document.getElementById("dstSHour").options;
+var dlHourEndOpts   = document.getElementById("dstEHour").options;
+var enable12Hour = document.getElementById("enable12Hour");
+
+
+
+if(enable12Hour.checked){
+	for (var i=0; i<12; i++) {
+		hOpts.add(new Option(i, i));
+		dlHourStartOpts.add(new Option(i, i));
+		dlHourEndOpts.add(new Option(i, i));
+		tim12Hour.style.display = "block";
+	}	
+}else{
+	for (var i=0; i<24; i++) {
+		hOpts.add(new Option(i, i));
+		dlHourStartOpts.add(new Option(i, i));
+		dlHourEndOpts.add(new Option(i, i));
+		tim12Hour.style.display = "none";
+	}		
+}	
+
+
+enable12Hour.onclick = function(){
+	
+	hSele.options.length = 0;
+	
+	if(enable12Hour.checked){
+		tim12Hour.style.display = "block";
+		
+		for (var i=0; i<12; i++) {
+			hOpts.add(new Option(i, i));
+			dlHourStartOpts.add(new Option(i, i));
+			dlHourEndOpts.add(new Option(i, i));
+		}	
+		
+		if(timeArr[3] > 11){
+				hOpts[timeArr[3] - 12].selected = true;
+				tim12Hour.options[1].selected = true;
+			}else{
+				hOpts[timeArr[3]].selected = true;
+				tim12Hour.options[0].selected = true;
+			}
+			mOpts[timeArr[4]].selected  = true;
+	}else{
+		tim12Hour.style.display = "none";
+		
+		for (var i=0; i<24; i++) {
+			hOpts.add(new Option(i, i));
+			dlHourStartOpts.add(new Option(i, i));
+			dlHourEndOpts.add(new Option(i, i));	
+		}	
+		
+		hOpts[timeArr[3]].selected = true;
+		mOpts[timeArr[4]].selected  = true;	
+	}	
+}
+
+/*for (var i=0; i<24; i++) {
+	hOpts.add(new Option(i, i));
+	dlHourStartOpts.add(new Option(i, i));
+	dlHourEndOpts.add(new Option(i, i));
+}
+*/
+function createDay(){
+	var sMonth = document.getElementById("dstSMonth");
+	var eMonth = document.getElementById("dstEMonth");
+	
+	var date = new Date();
+	var nYear = date.getFullYear();
+
+	dtsSMdayOpts.length = 0;
+	dtsEMdayOpts.length = 0;
+	
+	if(sMonth.value == 1 || sMonth.value == 3 || sMonth.value == 5 || sMonth.value == 7 || sMonth.value == 8 || sMonth.value == 10 || sMonth.value == 12){
+		for (var i=1; i<32; i++) {
+		dtsSMdayOpts.add(new Option(i, i));
+		}
+	}else if(sMonth.value == 2){
+		if(parseInt(nYear)%4 == 0 && parseInt(nYear)%100 != 0 || parseInt(nYear)%400 == 0){
+			for (var i=1; i<30; i++) {
+			dtsSMdayOpts.add(new Option(i, i));
+			}
+		}else{
+			for (var i=1; i<29; i++) {
+			dtsSMdayOpts.add(new Option(i, i));
+			}	
+		}
+	}else{
+		for (var i=1; i<31; i++) {
+		dtsSMdayOpts.add(new Option(i, i));
+		}	
+	}
+	
+	if(eMonth.value == 1 || eMonth.value == 3 || eMonth.value == 5 || eMonth.value == 7 || eMonth.value == 8 || eMonth.value == 10 || eMonth.value == 12){
+		for (var i=1; i<32; i++) {
+		dtsEMdayOpts.add(new Option(i, i));
+		}
+	}else if(eMonth.value == 2){
+		if(parseInt(nYear)%4 == 0 && parseInt(nYear)%100 != 0 || parseInt(nYear)%400 == 0){
+			for (var i=1; i<30; i++) {
+			dtsEMdayOpts.add(new Option(i, i));
+			}
+		}else{
+			for (var i=1; i<29; i++) {
+			dtsEMdayOpts.add(new Option(i, i));
+			}	
+		}
+	}else{
+		for (var i=1; i<31; i++) {
+		dtsEMdayOpts.add(new Option(i, i));
+		}	
+	}
+}
+
+createDay();
+
+for (var j=0; j<60; j++) {
+	mOpts.add(new Option(j, j));
+}
+
+dateFormatChange();
+var date = new Date();
+var mon  = date.getMonth() + 1;
+var hour = date.getHours();
+var min  = date.getMinutes()
+mon  = mon  > 9 ? mon  : "0" + mon;
+hour = hour > 9 ? hour : "0" + hour;
+min  = min  > 9 ? min  : "0" + min;
+/*document.getElementById("calendarSet").value = date.getFullYear() + "-" + mon  + "-" + date.getDate();*/
+var month = parseInt(timeArr[1]) + parseInt(1);
+document.getElementById("calendarSet").value =timeArr[0] + "-" + month + "-" + timeArr[2];
+
+if(enable12Hour.checked){
+	tim12Hour.style.display = "block";
+	if(timeArr[3] > 11){
+		hOpts[timeArr[3] - 12].selected = true;
+		tim12Hour.options[1].selected = true;
+	}else{
+		hOpts[timeArr[3]].selected = true;
+		tim12Hour.options[0].selected = true;;
+	}
+	mOpts[timeArr[4]].selected  = true;	
+}else{
+	hOpts[timeArr[3]].selected = true;
+	mOpts[timeArr[4]].selected  = true;
+}	
+
+dlHourStartOpts[parseInt("$%TIM_DaylightBeginHour_RW#$")].selected  = true;
+dlHourEndOpts[parseInt("$%TIM_DaylightEndHour_RW#$")].selected      = true;
+
+function changeDateDay(){
+	var isDstModeType  = document.getElementById("TIM_DstFixedType_RW");
+	if(isDstModeType.value==1)
+	{
+		dtsSMdayOpts[parseInt("$%TIM_DaylightBeginDay_RW#$")].selected  = true;
+		dtsEMdayOpts[parseInt("$%TIM_DaylightEndDay_RW#$")].selected      = true;
+	}
+}
+changeDateDay();
+
+loadCalendar();
+translate();
+</script>
+</html>
