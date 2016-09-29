@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" >
+<link rel="stylesheet" type ="text/css" href="style.css" id="cssLink">
+<script language="javascript" type="text/javascript" src="comm.js"></script>
+<script language="javascript" type="text/javascript" src="cookieUtil.js"></script>
+<script language="javascript" type="text/javascript" src="dialog.js"></script>
+</head>
+
+<body onload="ShowFrame()">
+<div class="content">
+	<div class="nav" id="nav">
+            <ul id="navUl">
+            </ul>
+    </div>
+	<div class="navbar" id="navbar">
+		<form method="POST" enctype="multipart/form-data">
+		<div class="label_f"><span id="XSTR_HLP_SETTING_UPGRADE">Software Upgrade</span></div>
+		<div class="OptDiv" align="center">
+			<table class="tb">
+				<tr>
+					<td width="20%" class="hidden"></td>
+					<td width="25%"><span id="XSTR_LBL_SW_VER">Current Software Version</span>:</td>
+					<td width="37%">$%CUS_VoipVersion_R#$</td>
+					<td width="18%" class="hidden"></td>
+				</tr>
+				<tr class="height20rem">
+					<td class="hidden"></td>
+					<td><span id="XSTR_LBL_GEN_SYS_IMG_FILE">System Image File</span>:</td>
+					<td>
+						<input type="file" name="System" onchange="show_select_file.value=this.value" style="position:absolute;filter:Alpha(opacity=0);opacity:0;" hidefocus />
+						<input type="text" name="show_select_file" disabled="disabled"/>
+						<input type="button" lang="XSTR_LBL_GEN_SELECT" value="Select" class="btninput_l lit_btninput" onclick="System.click();"/>
+					</td>
+					<td>(*.z)  <input type="button" lang="XSTR_WEB_TITLE_UPGRAGE" value="Upgrade" name="WebUpdate" class="btninput" onclick="mSubmit(forms[0])"/></td>
+				</tr>
+				<!--tr>
+					<td></td>
+					<td colspan="3">
+						<span id="newTip" style="display:none; color:#00f;"><span id="XSTR_MSG_NEW_VERSION">A new version %s is available</span>,</span>
+						<a id="newVersion" style="display:none; text-decoration:underline; color:#f00;"><span id="XSTR_MSG_DOWNLOAD">click here to download!</span></a>
+					</td>
+				</tr-->
+			</table>
+		</div>
+		</form>
+		
+		<!--div class="label"><span id="XSTR_LBL_UPD_SVR">Upgrade Server</span></div>
+		<div class="OptDiv" align="center">
+			<form method="post">
+			<table class="tb">
+				<tr>
+					<td width="20%"></td>
+					<td width="25%"><span id="XSTR_LBL_UPGRADE_ENABLE">Enable Auto Upgrade</span>:</td>
+					<td width="35%"><input type="checkbox" name="Upgrade_Enable_RW" value="ON" $%Upgrade_Enable_RW#$ /></td>
+					<td width="20%"><input type="hidden" name="CheckBoxManager" value="Upgrade_Enable_RW"/></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><span id="XSTR_LBL_UPD_SVR_ADDR">Upgrade Server Address</span>1:</td>
+					<td><input type="text" name="SYS_UpgradeServer" value="$%SYS_UpgradeServer#$"/></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><span id="XSTR_LBL_UPD_SVR_ADDR">Upgrade Server Address</span>2:</td>
+					<td><input type="text" name="SYS_UgBakServer" value="$%SYS_UgBakServer#$"/></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><input type="hidden" name="ReturnPage" value="/upgrade.htm"/></td>
+					<td></td>
+					<td><input type="submit" lang="XSTR_LBL_GEN_APPLY" class="btninput" name="DefaultUpgrade" value="Apply" /></td>
+					<td></td>
+				</tr>
+			</table>
+			</form>
+		</div-->
+        <div class="label_f"><span id="XSTR_HLP_RING_UPGRADE">Ring Upgrade</span></div>
+		<div class="OptDiv" id="RingType">
+                <table class="tb tb_center fourColTable">
+                    <tr style="background:#999;" class="bgWhite">
+                        <th style="width:33%;"><span id="XSTR_LBL_GEN_IDX">Index ID</th>
+                        <th style="width:33%;"><span id="XSTR_LBL_FILE_NAME">File Name</th>
+                        <th style="width:33%;"><span id="XSTR_LBL_FILE_SIZE">File Size</th>
+                    </tr>
+                </table>                
+                <div id="ringTypeListTbl"></div>                    
+                <table class="tb tb_center">  
+                    <tr style="background:#CCC;" class="bgWhite">
+                        <td colspan="3"></td>
+                        <td style="text-align:right; padding-right:20px;"><form method="post"><input type="hidden" name="RING_FILE_DELETE_W" id="RING_FILE_DELETE_W" />
+                            <input type="hidden" name="ReturnPage" value="/upgrade.htm" />
+	    				    <input type="submit" lang="XSTR_LBL_GEN_DEL" value="Delete" class="btninput_l lit_btninput" onclick="delItem('dplChb','RING_FILE_DELETE_W')"/>
+						    </form>
+                        </td>
+                    </tr>
+                </table>
+           
+                <div>
+                <form method="POST" enctype="multipart/form-data">
+                <tr>
+                <td style="width:30%"></td>
+                <td><span style="font-weight:normal"><span id="LOAD_SERVER_FILE">load server cer file</span></td>
+				<input type="file" name="ETC" onchange="mSubmit(forms[2]);" style="position:absolute;filter:Alpha(opacity=0);opacity:0;width:80px;" hidefocus />
+				<input type="button" lang="XSTR_LBL_GEN_UPLOAD" value="Upload" class="btninput" onclick="ETC.click();"/>
+				</tr>
+				</form>
+              </div>
+         </div>		
+	</div>
+	<div id="showProcess" class="showProcess"> 
+		<font class="font1" style="font-size:14px"><span id="XSTR_LBL_ALERT_SYS_PROC">Please don't do any operation, System is processing...</span></font> 
+	</div>
+</div>
+</body>
+
+<script language="javascript" type="text/javascript">
+
+/*var newVersionUrl = "$%Upgrade_NewVersion_R#$";
+if (!(newVersionUrl.indexOf("NULL") == 0)) {
+	var imgUrl 	= newVersionUrl.substring(0, newVersionUrl.indexOf(".z") + 2);
+	var arra 	= imgUrl.split("/");
+	var msgBox  = document.getElementById("newTip");
+	var imgLink = document.getElementById("newVersion");
+	
+	msgBox.innerHTML = msgBox.innerHTML.replace("%s", "<b>" + arra[arra.length - 2] + "</b>");
+	msgBox.style.display = "";
+	imgLink.href = imgUrl;
+	imgLink.style.display = "";
+}*/
+
+if (userLv == 5) {
+				names[0] = getTranslateContent("XSTR_LBL_GEN_INFO", "Information");
+				names[1] = getTranslateContent("XSTR_LBL_ACCOUNT", "Account");
+				names[2] = getTranslateContent("XSTR_WEB_TITLE_TOOLS", "Tools");
+				names_href = ["information.htm","profile.htm","tools.htm"];
+			} else if (userLv == 10) {
+				names[0] = getTranslateContent("XSTR_LBL_GEN_INFO", "Information");
+				names[1] = getTranslateContent("XSTR_LBL_ACCOUNT", "Account");
+				names[2] = getTranslateContent("XSTR_WEB_TITLE_CONFIG", "Configurations");
+				names[3] = getTranslateContent("XSTR_WEB_TITLE_UPGRAGE", "Upgrade");
+				names[4] = getTranslateContent("XSTR_WEB_TITLE_PROVISION", "Auto Provision");
+				names[5] = getTranslateContent("XSTR_WEB_TITLE_TOOLS", "Tools");
+				names[6] = getTranslateContent("XSTR_LBL_REBOOT_PHONE", "Reboot Phone");
+				names_href = ["information.htm","profile.htm","config.htm","upgrade.htm","provision.htm","tools.htm","reboot.htm"];
+			}
+
+createPhoneTitleCell(names, names_href);
+
+var td1 = "$%USER_RingTypeListTbl#$";
+
+var arr1 = new Array();
+arr1 = td1.split(",");
+
+function showRingTypeListTbl(arr) {
+	document.getElementById("ringTypeListTbl").innerHTML = "<table class='tb data_tb_even'>"
+		+ getRingTypeList(arr)
+		+ "</table>";
+}
+function getRingTypeList(arra) {
+	var res = "";
+	
+	for (var i=0; i<arra.length - 1; i++) {
+
+		res += "<tr>";
+		res += "<td style='text-align:center;width:33%'><input type='checkbox' name='dplChb' id='"+i+"' /></td>";
+		res += "<td style='text-align:center;width:33%'>" + arra[i] + "</td>";
+		res += "<td style='text-align:center;width:33%'>" + arra[i+1] + "</td>";
+		res += "</tr>";
+		i++;
+	}
+	
+	return res;
+}
+
+function delItem(listname,listEntry) {
+	var chboxs = document.getElementsByName(listname);
+	var len = chboxs.length;
+	var listEntery = document.getElementById(listEntry); 
+	for (var i=0; i<len; i++) {
+		if(chboxs[i].checked) {
+			listEntery.value += arr1[i*2] + ";";			
+		}
+
+	}
+}
+showRingTypeListTbl(arr1);
+
+translate();
+</script>
+</html>
